@@ -1,0 +1,86 @@
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int main() {
+    int n, frames;
+
+    cout << "Enter the number of pages: ";
+    cin >> n;
+
+    int page[100];
+
+    cout << "Enter the page reference string: ";
+    for (int i = 0; i < n; i++)
+        cin >> page[i];
+
+    cout << "Enter the number of frames: ";
+    cin >> frames;
+
+    int frame[20];
+
+    for (int i = 0; i < frames; i++)
+        frame[i] = -1;
+
+    int pointer = 0;
+    int faults = 0;
+    int hits = 0;
+
+    cout << "\nPage\tFrames\t\t\t\t\tStatus\n";
+
+    for (int i = 0; i < n; i++) {
+
+        bool found = false;
+
+
+        for (int j = 0; j < frames; j++) {
+            if (frame[j] == page[i]) {
+                found = true;
+                break;
+            }
+        }
+
+        if (found) {
+            hits++;
+        }
+        else {
+
+            frame[pointer] = page[i];
+            pointer = (pointer + 1) % frames;
+            faults++;
+        }
+
+        cout << page[i] << "\t";
+
+        for (int j = 0; j < frames; j++) {
+            if (frame[j] == -1)
+                cout << "- ";
+            else
+                cout << frame[j] << " ";
+        }
+
+        if (found)
+            cout << "\tHit";
+        else
+            cout << "\tPage Fault";
+
+        cout << endl;
+    }
+
+    double hitRatio = (double)hits / n;
+    double missRatio = (double)faults / n;
+
+    cout << fixed << setprecision(2);
+
+    cout << "\nTotal References = " << n;
+    cout << "\nTotal Hits = " << hits;
+    cout << "\nTotal Page Faults = " << faults;
+
+    cout << "\n\nHit Ratio = " << hitRatio;
+    cout << "\nMiss Ratio = " << missRatio;
+
+    cout << "\nHit Rate = " << hitRatio * 100 << "%";
+    cout << "\nMiss Rate = " << missRatio * 100 << "%";
+
+    return 0;
+}
