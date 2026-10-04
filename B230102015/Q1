@@ -1,0 +1,142 @@
+#include <stdio.h>
+struct Process
+{
+    int pid;
+    int arrival_time;
+    int burst_time;
+    int start_time;
+    int completion_time;
+    int turnaround_time;
+    int waiting_time;
+    int response_time;
+    int completed;
+};
+int main()
+{
+    int n;
+    printf("Enter number of processes: ");
+    scanf("%d", &n);
+    struct Process p[n];
+
+    for (int i = 0; i < n; i++)
+    {
+        p[i].pid = i + 1;
+        printf("\nProcess P%d\n", p[i].pid);
+        printf("Arrival Time: ");
+        scanf("%d", &p[i].arrival_time);
+        printf("Burst Time: ");
+        scanf("%d", &p[i].burst_time);
+        p[i].completed = 0;
+    }
+    int current_time = 0;
+    int completed_count = 0;
+    int cpu_busy_time = 0;
+
+    while (completed_count < n)
+    {
+        int selected = -1;
+        int shortest_burst = 999999;
+
+        for (int i = 0; i < n; i++)
+        {
+            if (!p[i].completed &&
+                    p[i].arrival_time <= current_time)
+            {
+                if (p[i].burst_time < shortest_burst)
+                {
+                    shortest_burst = p[i].burst_time;
+                    selected = i;
+                }
+                else if (p[i].burst_time == shortest_burst)
+                {
+
+                    if (p[i].arrival_time <
+                            p[selected].arrival_time)
+                    {
+                        selected = i;
+                    }
+                }
+            }
+        }
+
+        if (selected == -1)
+        {
+            int next_arrival = 999999;
+            for (int i = 0; i < n; i++)
+            {
+                if (!p[i].completed &&
+                        p[i].arrival_time < next_arrival)
+                {
+                    next_arrival = p[i].arrival_time;
+                }
+            }
+            current_time = next_arrival;
+            continue;
+        }
+
+        p[selected].start_time = current_time;
+
+        p[selected].response_time =
+            p[selected].start_time -
+            p[selected].arrival_time;
+
+        current_time += p[selected].burst_time;
+
+        p[selected].completion_time = current_time;
+
+        p[selected].turnaround_time =
+            p[selected].completion_time -
+            p[selected].arrival_time;
+
+        p[selected].waiting_time =
+            p[selected].turnaround_time -
+            p[selected].burst_time;
+        p[selected].completed = 1;
+        completed_count++;
+        cpu_busy_time += p[selected].burst_time;
+    }
+
+    float total_wt = 0;
+    float total_tat = 0;
+    float total_rt = 0;
+    for (int i = 0; i < n; i++)
+    {
+        total_wt += p[i].waiting_time;
+        total_tat += p[i].turnaround_time;
+        total_rt += p[i].response_time;
+    }
+    float average_wt = total_wt / n;
+    float average_tat = total_tat / n;
+    float average_rt = total_rt / n;
+
+    float throughput = (float)n / current_time;
+
+    float cpu_utilization =
+        ((float)cpu_busy_time / current_time) * 100;
+
+    printf("\n\n========== PROCESS TABLE ==========\n\n");
+    printf("%-8s %-8s %-8s %-8s %-8s %-8s %-8s\n",
+           "PID", "AT", "BT", "CT",
+           "TAT", "WT", "RT");
+    for (int i = 0; i < n; i++)
+    {
+        printf("P%-7d %-8d %-8d %-8d %-8d %-8d %-8d\n",
+               p[i].pid,
+               p[i].arrival_time,
+               p[i].burst_time,
+               p[i].completion_time,
+               p[i].turnaround_time,
+               p[i].waiting_time,
+               p[i].response_time);
+    }
+
+    printf("\n========== PERFORMANCE ==========\n");
+    printf("Average Waiting Time : %.2f\n", average_wt);
+    printf("Average Turnaround Time : %.2f\n", average_tat);
+    printf("Average Response Time : %.2f\n", average_rt);
+    printf("Throughput : %.2f processes/unit time\n",
+           throughput);
+    printf("CPU Utilization : %.2f%%\n",
+           cpu_utilization);
+    return 0;
+}
