@@ -1,0 +1,68 @@
+#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+
+    cout<<"Give the number of process : ";
+    cin>>n;
+    int pid[n];
+    int at[n];
+    int bt[n];
+    int wt[n];
+    int tat[n];
+    int ct[n];
+    int pr[n];
+    int complete[n] = {0};
+
+    for (int i=0;i<n;i++) {
+        cout<<"Enter the process id, Arrival time, Burst time : ";
+        cin >> pid[i];
+        cin >> at[i];
+        cin >> bt[i];
+        cin >> pr[i];
+    }
+
+    int done=0,time=0;
+    float total_tat=0,total_wt= 0;
+    while (done < n) {
+        int idx = -1;
+        int highestPriority =99999;
+
+        for (int i = 0; i < n; i++) {
+            if (at[i]<=time&&complete[i] == 0) {
+                if (pr[i] < highestPriority) {
+                    highestPriority = pr[i];
+                    idx = i;
+                }
+                else if(pr[i]==highestPriority && at[i]<at[idx]) {
+                    idx = i;
+                }
+            }
+        }
+
+        if (idx == -1) {
+            cout << "IDLE ";
+            time++;
+            continue;
+        }
+        cout << "P" << pid[idx] << " ";
+        ct[idx]=time+bt[idx];
+        tat[idx]=ct[idx]-at[idx];
+        wt[idx]=tat[idx]-bt[idx];
+        total_tat+=tat[idx];
+        total_wt+=wt[idx];
+        time=ct[idx];
+        complete[idx]=1;
+        done++;
+    }
+
+    cout << "n\t\tGantt Chart\n\n\nPROCESS\tPriority\tArrival Time\tBurst Time\tComplete Time\tWaiting Time\tTurn Around Time\n";
+    for (int i = 0; i < n; i++) {
+        cout<<pid[i]<<"\t"<<pr[i]<<"\t\t"<<at[i]<<"\t\t"<<bt[i]<<"\t\t"<<ct[i]<<"\t\t"<<wt[i]<<"\t\t" << tat[i] << "\n";
+    }
+    cout << "\nAverage waiting time : " << total_wt/n;
+    cout << "\nAverage turnaround time : " << total_tat/n;
+
+    return 0;
+}
