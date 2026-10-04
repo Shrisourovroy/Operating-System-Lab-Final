@@ -1,0 +1,126 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int n;
+
+    cout << "Enter number of processes: ";
+    cin >> n;
+
+    int pid[n], at[n], bt[n], pr[n];
+    int ct[n], tat[n], wt[n], rmt[n];
+
+    for (int i = 0; i < n; i++) {
+        pid[i] = i + 1;
+
+        cout << "Enter Arrival Time, Burst Time and Priority for P "<< pid[i] << ": ";
+
+        cin >> at[i] >> bt[i] >> pr[i];
+
+        rmt[i] = bt[i];
+        ct[i] = 0;
+        tat[i] = 0;
+        wt[i] = 0;
+    }
+
+    int crrntTime = 0;
+    int completed = 0;
+
+    float tWT = 0;
+    float tTAT = 0;
+    int tBT = 0;
+
+
+    int ganttPid[1000];
+    int k = 0;
+    int previous = -1;
+
+    while (completed < n) {
+
+        int idx = -1;
+        int highestPriority = 999999;
+
+
+        for (int i = 0; i < n; i++) {
+
+            if (at[i] <= crrntTime && rmt[i] > 0) {
+
+                if (pr[i] < highestPriority) {
+                    highestPriority = pr[i];
+                    idx = i;
+                }
+            }
+        }
+
+
+        if (idx == -1) {
+            crrntTime++;
+        }
+        else {
+
+
+            if (previous != pid[idx]) {
+                ganttPid[k] = pid[idx];
+                k++;
+                previous = pid[idx];
+            }
+
+
+            rmt[idx]--;
+            crrntTime++;
+
+
+            if (rmt[idx] == 0) {
+
+                ct[idx] = crrntTime;
+
+                tat[idx] = ct[idx] - at[idx];
+
+                wt[idx] = tat[idx] - bt[idx];
+
+                tWT += wt[idx];
+                tTAT += tat[idx];
+                tBT += bt[idx];
+
+                completed++;
+            }
+        }
+    }
+
+
+    cout << "\nGantt Chart: ";
+
+    for (int i = 0; i < k; i++) {
+        cout << "| P" << ganttPid[i] << " ";
+    }
+
+    cout << "|\n";
+
+
+    cout << "\nProcess\tAT\tBT\tPR\tCT\tTAT\tWT\n";
+
+    for (int i = 0; i < n; i++) {
+
+        cout << "P" << pid[i] << "\t"
+             << at[i] << "\t"
+             << bt[i] << "\t"
+             << pr[i] << "\t"
+             << ct[i] << "\t"
+             << tat[i] << "\t"
+             << wt[i] << endl;
+    }
+
+
+    float avgWT = tWT / n;
+
+
+    float avgTAT = tTAT / n;
+
+
+
+cout<<"Average waiting time: "<<avgWT<<endl;
+cout<<"Average Turnaround time: "<<avgTAT<<endl;
+
+
+    return 0;
+}
