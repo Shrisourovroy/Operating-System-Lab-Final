@@ -1,0 +1,97 @@
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int main()
+{
+    int n;
+    cout << "Enter number of processes: ";
+    cin >> n;
+
+    int p[20], at[20], bt[20], ct[20];
+    int tat[20], wt[20], rt[20], order[20];
+
+    for(int i = 0; i < n; i++)
+    {
+        p[i] = i + 1;
+        order[i] = i;
+
+        cout << "P" << p[i] << " AT: ";
+        cin >> at[i];
+
+        cout << "P" << p[i] << " BT: ";
+        cin >> bt[i];
+    }
+
+    // FCFS order
+    for(int i = 0; i < n - 1; i++)
+        for(int j = i + 1; j < n; j++)
+            if(at[order[i]] > at[order[j]])
+                swap(order[i], order[j]);
+
+    // Completion Time
+    int x = order[0];
+    ct[x] = at[x] + bt[x];
+
+    for(int i = 1; i < n; i++)
+    {
+        int cur = order[i];
+        int prev = order[i - 1];
+
+        if(ct[prev] < at[cur])
+            ct[cur] = at[cur] + bt[cur];
+        else
+            ct[cur] = ct[prev] + bt[cur];
+    }
+
+    int totalBT = 0;
+
+    for(int i = 0; i < n; i++)
+    {
+        tat[i] = ct[i] - at[i];
+        wt[i] = tat[i] - bt[i];
+        rt[i] = wt[i];
+
+        totalBT += bt[i];
+    }
+
+    int totalTime = ct[order[n - 1]] - at[order[0]];
+
+    double awt = 0, atat = 0, art = 0;
+
+    for(int i = 0; i < n; i++)
+    {
+        awt += wt[i];
+        atat += tat[i];
+        art += rt[i];
+    }
+
+    awt /= n;
+    atat /= n;
+    art /= n;
+
+    double throughput = (double)n / totalTime;
+    double cpu = (double)totalBT / totalTime * 100;
+
+    cout << "\nP\tAT\tBT\tCT\tTAT\tWT\tRT\n";
+
+    for(int i = 0; i < n; i++)
+    {
+        cout << "P" << p[i] << "\t"
+             << at[i] << "\t"
+             << bt[i] << "\t"
+             << ct[i] << "\t"
+             << tat[i] << "\t"
+             << wt[i] << "\t"
+             << rt[i] << endl;
+    }
+
+    cout << fixed << setprecision(2);
+    cout << "\nAverage WT  = " << awt;
+    cout << "\nAverage TAT = " << atat;
+    cout << "\nAverage RT  = " << art;
+    cout << "\nThroughput  = " << throughput;
+    cout << "\nCPU Usage   = " << cpu << "%";
+
+    return 0;
+}
