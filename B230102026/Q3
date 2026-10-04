@@ -1,0 +1,22 @@
+#include <iostream>
+using namespace std;
+
+int main(){
+    int page,frames;
+    cout << "Enter number of pages and frames :";
+    cin >> pages >> Frames;
+
+    int page_ref[100];
+    cout << "Enter Page Reference :";
+    for (int i = 0 ; i < page ; i++){
+        cin >> page_ref[i];
+    }
+    int hit[];
+    int miss[];
+
+    int toal_page_fault,total_page_hit;
+
+     for(int i = 0; i < n; i++){
+      bool found = false;
+     }
+}
