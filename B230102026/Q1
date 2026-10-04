@@ -1,0 +1,68 @@
+#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+
+    cout<<"Give the number of process :";
+    cin>>n;
+
+    int pid[100];
+    int at[n];
+    int bt[n];
+    int wt[n];
+    int tat[n];
+    int ct[n];
+    int completed[n]={0};
+    int total_ct=0;
+
+    for(int i=0;i<n;i++){
+        cout<<"Enter the process id,Arrival time,Burst time :";
+        cin >>pid[i]>>at[i]>>bt[i];
+    }
+
+    int done=0,time=0;
+    float total_time=0,total_tat=0,total_wt=0;
+    cout<<"\t\tGrantt chart\t\t\n";
+    cout<<"PROCESS\tArrival time\tBurst time\tComplete time\tWaiting time\tTurn Around time\n";
+
+    while(done<n){
+        int idx=-1;
+        for(int i=0;i<n;i++){
+            if(completed[i]==0 && at[i]<=time){
+                idx=i;
+                break;
+            }
+        }
+
+        if(idx==-1){
+            time++;
+        }
+        else{
+            if(time<at[idx]){
+                time=at[idx];
+            }
+
+            ct[idx]=time+bt[idx];
+            tat[idx]=ct[idx]-at[idx];
+            wt[idx]=tat[idx]-bt[idx];
+            total_tat+=tat[idx];
+            total_wt+=wt[idx];
+            time=ct[idx];
+            completed[idx]=1;
+            done++;
+            total_ct=+=ct[j];
+        }
+    }
+
+    for(int i=0;i<n;i++){
+        cout<<pid[i]<<"\t"<<at[i]<<"\t\t"<<bt[i]<<"\t\t"<<ct[i]<<"\t\t"<<wt[i]<<"\t\t"<<tat[i]<<"\n";
+    }
+
+    cout<<"Average waiting time :"<<total_wt/n<<endl;
+    cout<<"Average turnaround time : "<<total_tat/n<<endl;
+
+    cout<<total_ct;
+
+    return 0;
+}
