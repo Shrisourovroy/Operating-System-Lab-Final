@@ -1,1 +1,97 @@
 
+#include<bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int n;
+    cout<<"Enter the number of process: ";
+    cin >> n;
+
+    int pid[n], at[n], bt[n], ct[n], tat[n], wt[n];
+    bool completed[n] = {false};
+
+    for (int i = 0; i < n; i++) {
+        pid[i] = i + 1;
+        cout<<"Enter the arrival time and burst time "<<pid[i]<<" : ";
+        cin >> at[i] >> bt[i];
+    }
+
+    int crrntTime = 0, compCount = 0;
+    float tWT = 0, tTAT = 0;
+    int tBT = 0;
+
+
+    int ganttPid[n];
+    int k = 0;
+
+    while (compCount < n) {
+        int idx = -1;
+        int minBT = 9999;
+
+
+        for (int i = 0; i < n; i++) {
+            if (!completed[i] && at[i] <= crrntTime) {
+                if (bt[i] < minBT) {
+                    minBT = bt[i];
+                    idx = i;
+                }
+            }
+        }
+
+
+        if (idx == -1) {
+            crrntTime++;
+        }
+        else {
+            wt[idx] = crrntTime - at[idx];
+
+            crrntTime += bt[idx];
+
+            ct[idx] = crrntTime;
+            tat[idx] = ct[idx] - at[idx];
+
+            tWT += wt[idx];
+            tTAT += tat[idx];
+            tBT += bt[idx];
+
+            completed[idx] = true;
+            compCount++;
+
+
+            ganttPid[k] = pid[idx];
+            k++;
+        }
+    }
+
+
+    cout << "\nGantt Chart: ";
+    for (int i = 0; i < k; i++) {
+        cout << "| P" << ganttPid[i] << " ";
+    }
+    cout << "|\n";
+
+    cout << "\nProcess\tAT\tBT\tCT\tTAT\tWT\n";
+
+    for (int i = 0; i < n; i++) {
+        cout << "P" << pid[i] << "\t"
+             << at[i] << "\t"
+             << bt[i] << "\t"
+             << ct[i] << "\t"
+             << tat[i] << "\t"
+             << wt[i] << endl;
+    }
+
+    float avgWT = tWT / n;
+    float avgTAT = tTAT / n;
+
+    int tTime = crrntTime;
+
+
+
+    cout << "\nAverage Waiting Time = " << avgWT << endl;
+    cout << "Average Turnaround Time = " << avgTAT << endl;
+
+
+
+    return 0;
+}
