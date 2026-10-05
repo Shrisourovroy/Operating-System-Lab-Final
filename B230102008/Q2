@@ -1,0 +1,159 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    int n;
+
+    cout << "Enter number of processes: ";
+    cin >> n;
+
+    if (cin.fail() || n <= 0) {
+        cout << "Invalid input!\n";
+        return 0;
+    }
+
+    vector<int> pid(n), at(n), bt(n), priority(n);
+    vector<int> ct(n), tat(n), wt(n);
+    vector<bool> completed(n, false);
+
+   
+    vector<int> ganttPID;
+    vector<int> ganttStart;
+    vector<int> ganttEnd;
+
+    for (int i = 0; i < n; i++) {
+        pid[i] = i + 1;
+
+        cout << "Enter Arrival Time for P" << pid[i] << ": ";
+        cin >> at[i];
+
+        cout << "Enter Burst Time for P" << pid[i] << ": ";
+        cin >> bt[i];
+
+        cout << "Enter Priority for P" << pid[i] << ": ";
+        cin >> priority[i];
+
+        if (cin.fail() || at[i] < 0 || bt[i] <= 0) {
+            cout << "Invalid input!\n";
+            return 0;
+        }
+    }
+
+    int time = 0;
+    int completedCount = 0;
+
+    double totalWT = 0, totalTAT = 0;
+
+    while (completedCount < n) {
+
+        int index = -1;
+        int highestPriority = 999999;
+
+        
+        for (int i = 0; i < n; i++) {
+            if (!completed[i] &&
+                at[i] <= time &&
+                priority[i] < highestPriority) {
+
+                highestPriority = priority[i];
+                index = i;
+            }
+        }
+
+        
+        if (index == -1) {
+            int idleStart = time;
+
+            time++;
+
+          
+            ganttPID.push_back(0);
+            ganttStart.push_back(idleStart);
+            ganttEnd.push_back(time);
+
+            continue;
+        }
+
+        
+        int startTime = time;
+
+        
+        time += bt[index];
+
+        
+        ganttPID.push_back(pid[index]);
+        ganttStart.push_back(startTime);
+        ganttEnd.push_back(time);
+
+       
+        ct[index] = time;
+
+       
+        tat[index] = ct[index] - at[index];
+
+       
+        wt[index] = tat[index] - bt[index];
+
+        totalWT += wt[index];
+        totalTAT += tat[index];
+
+        completed[index] = true;
+        completedCount++;
+    }
+
+  
+    cout << "\nPID\tAT\tBT\tPriority\tCT\tTAT\tWT\n";
+
+    for (int i = 0; i < n; i++) {
+        cout << "P" << pid[i] << "\t"
+             << at[i] << "\t"
+             << bt[i] << "\t"
+             << priority[i] << "\t\t"
+             << ct[i] << "\t"
+             << tat[i] << "\t"
+             << wt[i] << "\n";
+    }
+
+
+    cout << "\n\nGantt Chart:\n";
+
+    cout << " ";
+    for (int i = 0; i < ganttPID.size(); i++) {
+        cout << "---------";
+    }
+    cout << "\n|";
+
+    for (int i = 0; i < ganttPID.size(); i++) {
+        if (ganttPID[i] == 0)
+            cout << "  Idle  |";
+        else
+            cout << "   P" << ganttPID[i] << "   |";
+    }
+
+    cout << "\n ";
+
+    for (int i = 0; i < ganttPID.size(); i++) {
+        cout << "---------";
+    }
+
+    cout << "\n";
+
+    cout << ganttStart[0];
+
+    for (int i = 0; i < ganttPID.size(); i++) {
+        cout << "\t";
+        cout << ganttEnd[i];
+    }
+
+    cout << "\n";
+
+    
+    cout << "\nAverage Waiting Time = "
+         << totalWT / n << endl;
+
+    cout << "Average Turnaround Time = "
+         << totalTAT / n << endl;
+
+    return 0;
+}
