@@ -1,0 +1,96 @@
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    int n;
+
+    cout << "Enter number of processes: ";
+    cin >> n;
+
+    int pid[20], at[20], bt[20];
+    int ct[20], tat[20], wt[20];
+
+    for (int i = 0; i < n; i++)
+    {
+        pid[i] = i + 1;
+
+        cout << "Enter Arrival Time of P" << pid[i] << ": ";
+        cin >> at[i];
+
+        cout << "Enter Burst Time of P" << pid[i] << ": ";
+        cin >> bt[i];
+    }
+
+    int time = 0;
+
+    for (int i = 0; i < n; i++)
+    {
+
+        if (time < at[i])
+        {
+            time = at[i];
+        }
+
+        time = time + bt[i];
+
+        ct[i] = time;
+        tat[i] = ct[i] - at[i];
+        wt[i] = tat[i] - bt[i];
+    }
+
+    cout << "\n\nProcess\tAT\tBT\tCT\tTAT\tWT\n";
+
+    for (int i = 0; i < n; i++)
+    {
+        cout << "P" << pid[i] << "\t"
+             << at[i] << "\t"
+             << bt[i] << "\t"
+             << ct[i] << "\t"
+             << tat[i] << "\t"
+             << wt[i] << endl;
+    }
+    float avgTAT = 0, avgWT = 0;
+
+    for (int i = 0; i < n; i++)
+    {
+        avgTAT = avgTAT + tat[i];
+        avgWT = avgWT + wt[i];
+    }
+
+    avgTAT = avgTAT / n;
+    avgWT = avgWT / n;
+
+    cout << "\nAverage Turnaround Time = " << avgTAT;
+    cout << "\nAverage Waiting Time = " << avgWT;
+
+    cout << "\n\nGantt Chart:\n";
+
+    cout << " ";
+
+    for (int i = 0; i < n; i++)
+    {
+        cout << "--------";
+    }
+
+    cout << "\n|";
+    for (int i = 0; i < n; i++)
+    {
+        cout << "  P" << pid[i] << "   |";
+    }
+cout << "\n ";
+
+    for (int i = 0; i < n; i++)
+    {
+        cout << "--------";
+    }
+    cout << "\n";
+    cout << at[0];
+    for (int i = 0; i < n; i++)
+    {
+        cout << "\t" << ct[i];
+    }
+
+    cout << endl;
+    return 0;
+}
