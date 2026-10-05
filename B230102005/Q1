@@ -1,0 +1,83 @@
+#include<iostream>
+using namespace std;
+
+int main()
+{
+    int n;
+    cout << "Enter number of processes: ";
+    cin >> n;
+
+    int pid[100], at[100], bt[100], ct[100], tat[100], wt[100];
+    int completed[10] = {0};
+    for(int i = 0; i < n; i++)
+    {
+        pid[i] = i+1;
+cout << "Enter Arrival Time and Burst Time for P"
+             << pid[i] << ": ";
+        cin >> at[i] >> bt[i];
+    }
+
+    int time = 0;
+    int done = 0;
+    while(done < n)
+    {
+        int index = -1;
+        int shortest = 9999;
+
+
+        for(int i = 0; i < n; i++)
+        {
+            if(completed[i] == 0 && at[i] <= time)
+            {
+                if(bt[i] < shortest)
+                {
+                    shortest = bt[i];
+                    index = i;
+                }
+            }
+        }
+
+
+        if(index == -1)
+        {
+            time++;
+        }
+        else
+        {
+
+            time = time + bt[index];
+
+            ct[index] = time;
+            tat[index] = ct[index] - at[index];
+            wt[index] = tat[index] - bt[index];
+
+            completed[index] = 1;
+            done++;
+        }
+    }
+    cout << "\nProcess\tAT\tBT\tCT\tTAT\tWT\n";
+
+    float avg_tat = 0, avg_wt = 0;
+
+    for(int i = 0; i < n; i++)
+    {
+        cout << "P" << pid[i] << "\t"
+             << at[i] << "\t"
+             << bt[i] << "\t"
+             << ct[i] << "\t"
+             << tat[i] << "\t"
+             << wt[i] << endl;
+
+        avg_tat += tat[i];
+        avg_wt += wt[i];
+    }
+
+    cout << "\nAverage Turnaround Time = "
+         << avg_tat / n;
+
+    cout << "\nAverage Waiting Time = "
+         << avg_wt / n;
+
+    return 0;
+
+}
