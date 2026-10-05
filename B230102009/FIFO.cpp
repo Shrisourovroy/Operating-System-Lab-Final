@@ -1,0 +1,65 @@
+#include <iostream>
+using namespace std;
+
+int main() {
+    int frames, n;
+
+    cout << "Enter number of frames: ";
+    cin >> frames;
+    cout << "Enter number of pages: ";
+    cin >> n;
+
+     cout << "Enter page references: ";
+
+
+    int pages[100], framesArr[100];
+    for (int i = 0; i < n; i++)
+        cin >> pages[i];
+
+    int pageHits = 0, pageMisses = 0;
+    int index = 0;
+    int count = 0;
+
+    cout << "\nPage\tFrames\n";
+
+
+    for (int i = 0; i < n; i++) {
+        bool hit = false;
+
+
+        for (int j = 0; j < count; j++) {
+            if (framesArr[j] == pages[i]) {
+                hit = true;
+                break;
+            }
+        }
+
+
+        if (hit) {
+            pageHits++;
+        } else {
+            pageMisses++;
+            if (count < frames) {
+                framesArr[count++] = pages[i];
+            }
+
+             else {
+                framesArr[index] = pages[i];
+                index = (index + 1) % frames;
+            }
+        }
+
+
+        cout << pages[i] << "\t";
+        for (int k = 0; k < count; k++) cout << framesArr[k] << " ";
+        cout << (hit ? "Hit" : "Miss") << "\n";
+    }
+
+    cout << "\nTotal Page Hits: " << pageHits << "\n";
+    cout << "Total Page Misses: " << pageMisses << "\n";
+    cout << "Hit Ratio: " << (float)pageHits / n << "\n";
+    cout << "Miss Ratio: " << (float)pageMisses / n << "\n";
+
+    return 0;
+}
+
