@@ -1,0 +1,129 @@
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    int n;
+
+    cout << "Enter number of processes: ";
+    cin >> n;
+
+    int pid[20], at[20], bt[20], pr[20];
+    int ct[20], tat[20], wt[20];
+    bool done[20] = {false};
+
+    for(int i = 0; i < n; i++)
+    {
+        pid[i] = i + 1;
+
+        cout << "\nProcess P" << pid[i] << endl;
+
+        cout << "Arrival Time: ";
+        cin >> at[i];
+
+        cout << "Burst Time: ";
+        cin >> bt[i];
+
+        cout << "Priority: ";
+        cin >> pr[i];
+    }
+
+    int completed = 0;
+    int time = 0;
+    while(completed < n)
+    {
+        int index = -1;
+        int highestPriority = 9999;
+
+        for(int i = 0; i < n; i++)
+        {
+            if(!done[i] && at[i] <= time)
+            {
+                if(pr[i] < highestPriority)
+                {
+                    highestPriority = pr[i];
+                    index = i;
+                }
+            }
+        }
+        if(index == -1)
+        {
+            time++;
+            continue;
+        }
+        time = time + bt[index];
+
+        ct[index] = time;
+        tat[index] = ct[index] - at[index];
+        wt[index] = tat[index] - bt[index];
+
+        done[index] = true;
+        completed++;
+    }
+    cout << "\n\n";
+    cout << "----------------------------------------------\n";
+    cout << "Process\tAT\tBT\tPriority\tCT\tTAT\tWT\n";
+    cout << "----------------------------------------------------\n";
+
+    float avgWT = 0, avgTAT = 0;
+    for(int i = 0; i < n; i++)
+    {
+        cout << "P" << pid[i] << "\t"
+             << at[i] << "\t"
+             << bt[i] << "\t"
+             << pr[i] << "\t\t"
+             << ct[i] << "\t"
+             << tat[i] << "\t"
+             << wt[i] << endl;
+
+        avgWT += wt[i];
+        avgTAT += tat[i];
+    }
+
+    cout << "--------------------------\n";
+    avgWT = avgWT / n;
+    avgTAT = avgTAT / n;
+    cout << "\nAverage Waiting Time = " << avgWT;
+    cout << "\nAverage Turnaround Time = " << avgTAT;
+    cout << "\n\nGantt Chart:\n";
+    cout << " ";
+    for(int i = 0; i < n; i++)
+    {
+        cout << "--------";
+    }
+    cout << "-\n|";
+    int order[20];
+
+    for(int i = 0; i < n; i++)
+        order[i] = i;
+
+    for(int i = 0; i < n - 1; i++)
+    {
+        for(int j = i + 1; j < n; j++)
+        {
+            if(ct[order[i]] > ct[order[j]])
+            {
+                int temp = order[i];
+                order[i] = order[j];
+                order[j] = temp;
+            }
+        }
+    }
+    for(int i = 0; i < n; i++)
+    {
+        cout << "  P" << pid[order[i]] << "  |";
+    }
+    cout << "\n ";
+    for(int i = 0; i < n; i++)
+    {
+        cout << "--------";
+    }
+    cout << "-\n";
+    cout << "0";
+    for(int i = 0; i < n; i++)
+    {
+        cout << "\t" << ct[order[i]];
+    }
+    cout << endl;
+    return 0;
+}
